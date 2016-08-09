@@ -389,9 +389,7 @@ sub build_pangenome
     	my $ftrs = $currgenome->{features};
     	for (my $j=0; $j < @{$ftrs}; $j++) {
     		my $feature = $ftrs->[$j];
-    		print "Gene:".$feature->{id}."\n";
     		if (defined($feature->{protein_translation})) {
-    			print "Translation for:".$feature->{id}."\n";
     			$proteins->{$feature->{id}} = $feature->{protein_translation};
     			my $matchortho;
     			my $bestortho;
