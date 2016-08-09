@@ -20,7 +20,7 @@ This sample module contains one small method - filter_contigs.
 use Bio::KBase::AuthToken;
 use Bio::KBase::workspace::Client;
 use Config::IniFiles;
-use Data::Dumper;
+use JSON::XS;
 
 sub function_to_roles{
 	my ($self,$function) = @_;
