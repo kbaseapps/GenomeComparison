@@ -190,12 +190,14 @@ sub util_get_genome {
 	my $info = $info_array->[0];
 	my $genome;
 	if ($info->[2] =~ /GenomeAnnotation/) {
+		print "Loading new genome!\n";
 		my $output = $self->util_runexecutable($self->{"Data_API_script_directory"}.'get_genome.py "'.$self->{'workspace-url'}.'" "'.$self->{'shock-url'}.'" "'.$self->{"handle-service-url"}.'" "'.$token.'" "'.$info->[6]."/".$info->[0]."/".$info->[4].'" "'.$info->[1].'" 1');
 		my $last = pop(@{$output});
 		if ($last !~ m/SUCCESS/) {
 			die "Genome failed to load!";
 		}
 		$genome = $self->util_from_json(pop(@{$output}));
+		print "Feature count:".@{$genome->{features}}."\n";
 		delete $genome->{contigobj};
 	} else {
 		$genome=$wsClient->get_objects([$self->util_configure_ws_id($ref)])->[0]{data};
