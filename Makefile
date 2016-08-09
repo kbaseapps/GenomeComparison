@@ -18,6 +18,8 @@ KB_RUNTIME ?= /kb/runtime
 default: compile build-startup-script build-executable-script build-test-script
 
 compile:
+	cp pybin/get_contigset.py $(TARGET)/pybin/
+	cp pybin/get_genome.py $(TARGET)/pybin/
 	kb-sdk compile $(SPEC_FILE) \
 		--out $(LIB_DIR) \
 		--plclname $(SERVICE_CAPS)::$(SERVICE_CAPS)Client \
@@ -32,8 +34,6 @@ compile:
 
 build-executable-script:
 	mkdir -p $(LBIN_DIR)
-	cp pybin/get_contigset.py $(TARGET)/pybin/
-	cp pybin/get_genome.py $(TARGET)/pybin/
 	echo '#!/bin/bash' > $(LBIN_DIR)/$(EXECUTABLE_SCRIPT_NAME)
 	echo 'script_dir=$$(dirname "$$(readlink -f "$$0")")' >> $(LBIN_DIR)/$(EXECUTABLE_SCRIPT_NAME)
 	echo 'export PERL5LIB=$$script_dir/../$(LIB_DIR):$$PATH:$$PERL5LIB' >> $(LBIN_DIR)/$(EXECUTABLE_SCRIPT_NAME)
