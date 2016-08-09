@@ -372,7 +372,7 @@ sub build_pangenome
     	my $bestorthos = [];
 	my $currgenome = undef;
 	eval {
-	    print STDERR "Getting object from workspace with ref $currgenome_ref\n";
+	    print "Loading genome ".$currgenome_name."\n";
 	    $currgenome = $self->util_get_genome($wsClient,$token,$currgenome_name);
 	    $currgenome_ref = $currgenome->{_reference};
 	    push @{$provenance->[0]->{'input_ws_objects'}}, $currgenome_name;
@@ -383,6 +383,7 @@ sub build_pangenome
 	
     	push(@{$pangenome->{genome_refs}},$currgenome_ref);
     	if ($i == 1) {
+    		print "Scientific name:".$currgenome->{scientific_name}."\n";
     		my $array = [split(/\s/,$currgenome->{scientific_name})];
     		$pangenome->{name} = $array->[0]." pangenome";
     	}
