@@ -1,5 +1,5 @@
 
-package us.kbase.genomecomparison;
+package us.kbase.genomecomparisonsdk;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,4 +1,4 @@
-package GenomeComparison::GenomeComparisonServer;
+package GenomeComparisonSDK::GenomeComparisonSDKServer;
 
 
 use Data::Dumper;
@@ -52,13 +52,13 @@ our %sync_methods = (
 );
 
 our %async_run_methods = (
-        'build_pangenome_async' => 'GenomeComparison.build_pangenome',
-        'compare_genomes_async' => 'GenomeComparison.compare_genomes',
+        'build_pangenome_async' => 'GenomeComparisonSDK.build_pangenome',
+        'compare_genomes_async' => 'GenomeComparisonSDK.compare_genomes',
 );
 
 our %async_check_methods = (
-        'build_pangenome_check' => 'GenomeComparison.build_pangenome',
-        'compare_genomes_check' => 'GenomeComparison.compare_genomes',
+        'build_pangenome_check' => 'GenomeComparisonSDK.build_pangenome',
+        'compare_genomes_check' => 'GenomeComparisonSDK.compare_genomes',
 );
 
 sub _build_valid_methods
@@ -92,7 +92,7 @@ sub get_service_name
 {
     my ($self) = @_;
     if(!defined $ENV{$SERVICE}) {
-        return 'GenomeComparison';
+        return 'GenomeComparisonSDK';
     }
     return $ENV{$SERVICE};
 }
@@ -236,7 +236,7 @@ sub call_method {
 
     my ($module, $method, $modname) = @$method_info{qw(module method modname)};
     
-    my $ctx = GenomeComparison::GenomeComparisonServerContext->new($self->{loggers}->{userlog},
+    my $ctx = GenomeComparisonSDK::GenomeComparisonSDKServerContext->new($self->{loggers}->{userlog},
                            client_ip => $self->getIPAddress());
     $ctx->module($modname);
     $ctx->method($method);
@@ -246,7 +246,7 @@ sub call_method {
     my $prov_action = {'service' => $modname, 'method' => $method, 'method_params' => $args};
     $ctx->provenance([$prov_action]);
 {
-    # Service GenomeComparison requires authentication.
+    # Service GenomeComparisonSDK requires authentication.
 
     my $method_auth = $method_authentication{$method};
     $ctx->authenticated(0);
@@ -260,7 +260,7 @@ sub call_method {
 
 	if (!$token && $method_auth eq 'required')
 	{
-	    $self->exception('PerlError', "Authentication required for GenomeComparison but no authentication header was passed");
+	    $self->exception('PerlError', "Authentication required for GenomeComparisonSDK but no authentication header was passed");
 	}
 
 	my $auth_token = Bio::KBase::AuthToken->new(token => $token, ignore_authrc => 1);
@@ -299,7 +299,7 @@ sub call_method {
         local $ENV{KBRPC_METADATA} = $kb_metadata if $kb_metadata;
         local $ENV{KBRPC_ERROR_DEST} = $kb_errordest if $kb_errordest;
 
-        my $stderr = GenomeComparison::GenomeComparisonServerStderrWrapper->new($ctx, $get_time);
+        my $stderr = GenomeComparisonSDK::GenomeComparisonSDKServerStderrWrapper->new($ctx, $get_time);
         $ctx->stderr($stderr);
 
         my $xFF = $self->_plack_req_header("X-Forwarded-For");
@@ -426,7 +426,7 @@ sub get_method
     if (!$self->valid_methods->{$method})
     {
 	$self->exception('NoSuchMethod',
-			 "'$method' is not a valid method in service GenomeComparison.");
+			 "'$method' is not a valid method in service GenomeComparisonSDK.");
     }
 	
     my $inst = $self->instance_dispatch->{$package};
@@ -516,13 +516,13 @@ sub handle_error_cli {
         . " this error: $@\n";
 }
 
-package GenomeComparison::GenomeComparisonServerContext;
+package GenomeComparisonSDK::GenomeComparisonSDKServerContext;
 
 use strict;
 
 =head1 NAME
 
-GenomeComparison::GenomeComparisonServerContext
+GenomeComparisonSDK::GenomeComparisonSDKServerContext
 
 head1 DESCRIPTION
 
@@ -614,7 +614,7 @@ sub clear_log_level
     $self->{_logger}->clear_user_log_level();
 }
 
-package GenomeComparison::GenomeComparisonServerStderrWrapper;
+package GenomeComparisonSDK::GenomeComparisonSDKServerStderrWrapper;
 
 use strict;
 use POSIX;
@@ -870,15 +870,15 @@ unless (caller) {
     my($input_file,$output_file,$token) = @ARGV;
     my @dispatch;
     {
-        use GenomeComparison::GenomeComparisonImpl;
-        my $obj = GenomeComparison::GenomeComparisonImpl->new;
-        push(@dispatch, 'GenomeComparison' => $obj);
+        use GenomeComparisonSDK::GenomeComparisonSDKImpl;
+        my $obj = GenomeComparisonSDK::GenomeComparisonSDKImpl->new;
+        push(@dispatch, 'GenomeComparisonSDK' => $obj);
     }
     my %headers = (
         "Authorization" => $token,
         "CLI" => "1"
     );
-    my $server = GenomeComparison::GenomeComparisonServer->new(
+    my $server = GenomeComparisonSDK::GenomeComparisonSDKServer->new(
         instance_dispatch => { @dispatch },
         allow_get => 0, 
         local_headers => \%headers);

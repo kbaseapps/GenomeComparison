@@ -34,7 +34,7 @@
   "behavior" : {
     "service-mapping" : {
       "url" : "",
-      "name" : "GenomeComparison",
+      "name" : "GenomeComparisonSDK",
       "method" : "compare_genomes",
       "input_mapping" : [
         {

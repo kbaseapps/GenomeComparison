@@ -5,25 +5,25 @@ use Config::Simple;
 use Time::HiRes qw(time);
 use Bio::KBase::AuthToken;
 use Bio::KBase::workspace::Client;
-use GenomeComparison::GenomeComparisonImpl;
+use GenomeComparisonSDK::GenomeComparisonSDKImpl;
 
 local $| = 1;
 my $token = $ENV{'KB_AUTH_TOKEN'};
-#$ENV{'KB_DEPLOYMENT_CONFIG'} = "/Users/chenry/code/GenomeComparison/localdeploy.cfg";
+$ENV{'KB_DEPLOYMENT_CONFIG'} = "/Users/chenry/code/GenomeComparison/localdeploy.cfg";
 my $config_file = $ENV{'KB_DEPLOYMENT_CONFIG'};
-my $config = new Config::Simple($config_file)->get_block('GenomeComparison');
+my $config = new Config::Simple($config_file)->get_block('GenomeComparisonSDK');
 my $ws_url = $config->{"workspace-url"};
 my $ws_name = undef;
 my $ws_client = new Bio::KBase::workspace::Client($ws_url,token => $token);
 my $auth_token = Bio::KBase::AuthToken->new(token => $token, ignore_authrc => 1);
 my $ctx = LocalCallContext->new($token, $auth_token->user_id);
-$GenomeComparison::GenomeComparisonServer::CallContext = $ctx;
-my $impl = new GenomeComparison::GenomeComparisonImpl();
+$GenomeComparisonSDK::GenomeComparisonSDKServer::CallContext = $ctx;
+my $impl = new GenomeComparisonSDK::GenomeComparisonSDKImpl();
 
 sub get_ws_name {
     if (!defined($ws_name)) {
         my $suffix = int(time * 1000);
-        $ws_name = 'test_GenomeComparison_' . $suffix;
+        $ws_name = 'test_GenomeComparisonSDK_' . $suffix;
         $ws_client->create_workspace({workspace => $ws_name});
     }
     return $ws_name;
@@ -125,7 +125,7 @@ if (defined($err)) {
     }
     sub provenance {
         my($self) = @_;
-        return [{'service' => 'GenomeComparison', 'method' => 'please_never_use_it_in_production', 'method_params' => []}];
+        return [{'service' => 'GenomeComparisonSDK', 'method' => 'please_never_use_it_in_production', 'method_params' => []}];
     }
     sub authenticated {
         return 1;

@@ -1,4 +1,4 @@
-package GenomeComparison::GenomeComparisonClient;
+package GenomeComparisonSDK::GenomeComparisonSDKClient;
 
 use JSON::RPC::Client;
 use POSIX;
@@ -21,12 +21,12 @@ our $VERSION = "0.1.0";
 
 =head1 NAME
 
-GenomeComparison::GenomeComparisonClient
+GenomeComparisonSDK::GenomeComparisonSDKClient
 
 =head1 DESCRIPTION
 
 
-A KBase module: GenomeComparison
+A KBase module: GenomeComparisonSDK
 This sample module contains one small method - filter_contigs.
 
 
@@ -38,7 +38,7 @@ sub new
     
 
     my $self = {
-	client => GenomeComparison::GenomeComparisonClient::RpcClient->new,
+	client => GenomeComparisonSDK::GenomeComparisonSDKClient::RpcClient->new,
 	url => $url,
 	headers => [],
     };
@@ -113,8 +113,8 @@ sub new
 =begin html
 
 <pre>
-$input is a GenomeComparison.BuildPangenomeParams
-$return is a GenomeComparison.BuildPangenomeResult
+$input is a GenomeComparisonSDK.BuildPangenomeParams
+$return is a GenomeComparisonSDK.BuildPangenomeResult
 BuildPangenomeParams is a reference to a hash where the following keys are defined:
 	genome_refs has a value which is a reference to a list where each element is a string
 	genomeset_ref has a value which is a string
@@ -131,8 +131,8 @@ BuildPangenomeResult is a reference to a hash where the following keys are defin
 
 =begin text
 
-$input is a GenomeComparison.BuildPangenomeParams
-$return is a GenomeComparison.BuildPangenomeResult
+$input is a GenomeComparisonSDK.BuildPangenomeParams
+$return is a GenomeComparisonSDK.BuildPangenomeResult
 BuildPangenomeParams is a reference to a hash where the following keys are defined:
 	genome_refs has a value which is a reference to a list where each element is a string
 	genomeset_ref has a value which is a string
@@ -178,7 +178,7 @@ BuildPangenomeResult is a reference to a hash where the following keys are defin
     }
 
     my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "GenomeComparison.build_pangenome",
+	method => "GenomeComparisonSDK.build_pangenome",
 	params => \@args,
     });
     if ($result) {
@@ -212,8 +212,8 @@ BuildPangenomeResult is a reference to a hash where the following keys are defin
 =begin html
 
 <pre>
-$params is a GenomeComparison.CompareGenomesParams
-$return is a GenomeComparison.CompareGenomesResult
+$params is a GenomeComparisonSDK.CompareGenomesParams
+$return is a GenomeComparisonSDK.CompareGenomesResult
 CompareGenomesParams is a reference to a hash where the following keys are defined:
 	pangenome_ref has a value which is a string
 	protcomp_ref has a value which is a string
@@ -230,8 +230,8 @@ CompareGenomesResult is a reference to a hash where the following keys are defin
 
 =begin text
 
-$params is a GenomeComparison.CompareGenomesParams
-$return is a GenomeComparison.CompareGenomesResult
+$params is a GenomeComparisonSDK.CompareGenomesParams
+$return is a GenomeComparisonSDK.CompareGenomesResult
 CompareGenomesParams is a reference to a hash where the following keys are defined:
 	pangenome_ref has a value which is a string
 	protcomp_ref has a value which is a string
@@ -277,7 +277,7 @@ Compares the specified genomes and computes unique features and core features
     }
 
     my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-	method => "GenomeComparison.compare_genomes",
+	method => "GenomeComparisonSDK.compare_genomes",
 	params => \@args,
     });
     if ($result) {
@@ -303,7 +303,7 @@ Compares the specified genomes and computes unique features and core features
 sub version {
     my ($self) = @_;
     my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-        method => "GenomeComparison.version",
+        method => "GenomeComparisonSDK.version",
         params => [],
     });
     if ($result) {
@@ -346,10 +346,10 @@ sub _validate_version {
         );
     }
     if ($sMinor > $cMinor) {
-        warn "New client version available for GenomeComparison::GenomeComparisonClient\n";
+        warn "New client version available for GenomeComparisonSDK::GenomeComparisonSDKClient\n";
     }
     if ($sMajor == 0) {
-        warn "GenomeComparison::GenomeComparisonClient version is $svr_version. API subject to change.\n";
+        warn "GenomeComparisonSDK::GenomeComparisonSDKClient version is $svr_version. API subject to change.\n";
     }
 }
 
@@ -499,7 +499,7 @@ cg_ref has a value which is a string
 
 =cut
 
-package GenomeComparison::GenomeComparisonClient::RpcClient;
+package GenomeComparisonSDK::GenomeComparisonSDKClient::RpcClient;
 use base 'JSON::RPC::Client';
 use POSIX;
 use strict;

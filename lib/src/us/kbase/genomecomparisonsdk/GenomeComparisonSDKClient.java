@@ -1,4 +1,4 @@
-package us.kbase.genomecomparison;
+package us.kbase.genomecomparisonsdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
@@ -13,20 +13,20 @@ import us.kbase.common.service.RpcContext;
 import us.kbase.common.service.UnauthorizedException;
 
 /**
- * <p>Original spec-file module name: GenomeComparison</p>
+ * <p>Original spec-file module name: GenomeComparisonSDK</p>
  * <pre>
- * A KBase module: GenomeComparison
+ * A KBase module: GenomeComparisonSDK
  * This sample module contains one small method - filter_contigs.
  * </pre>
  */
-public class GenomeComparisonClient {
+public class GenomeComparisonSDKClient {
     private JsonClientCaller caller;
 
 
     /** Constructs a client with a custom URL and no user credentials.
      * @param url the URL of the service.
      */
-    public GenomeComparisonClient(URL url) {
+    public GenomeComparisonSDKClient(URL url) {
         caller = new JsonClientCaller(url);
     }
     /** Constructs a client with a custom URL.
@@ -36,7 +36,7 @@ public class GenomeComparisonClient {
      * @throws IOException if an IOException occurs when checking the token's
      * validity.
      */
-    public GenomeComparisonClient(URL url, AuthToken token) throws UnauthorizedException, IOException {
+    public GenomeComparisonSDKClient(URL url, AuthToken token) throws UnauthorizedException, IOException {
         caller = new JsonClientCaller(url, token);
     }
 
@@ -48,7 +48,7 @@ public class GenomeComparisonClient {
      * @throws IOException if an IOException occurs when checking the user's
      * credentials.
      */
-    public GenomeComparisonClient(URL url, String user, String password) throws UnauthorizedException, IOException {
+    public GenomeComparisonSDKClient(URL url, String user, String password) throws UnauthorizedException, IOException {
         caller = new JsonClientCaller(url, user, password);
     }
 
@@ -143,8 +143,8 @@ public class GenomeComparisonClient {
      * <p>Original spec-file function name: build_pangenome</p>
      * <pre>
      * </pre>
-     * @param   input   instance of type {@link us.kbase.genomecomparison.BuildPangenomeParams BuildPangenomeParams}
-     * @return   instance of type {@link us.kbase.genomecomparison.BuildPangenomeResult BuildPangenomeResult}
+     * @param   input   instance of type {@link us.kbase.genomecomparisonsdk.BuildPangenomeParams BuildPangenomeParams}
+     * @return   instance of type {@link us.kbase.genomecomparisonsdk.BuildPangenomeResult BuildPangenomeResult}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
@@ -152,7 +152,7 @@ public class GenomeComparisonClient {
         List<Object> args = new ArrayList<Object>();
         args.add(input);
         TypeReference<List<BuildPangenomeResult>> retType = new TypeReference<List<BuildPangenomeResult>>() {};
-        List<BuildPangenomeResult> res = caller.jsonrpcCall("GenomeComparison.build_pangenome", args, retType, true, true, jsonRpcContext);
+        List<BuildPangenomeResult> res = caller.jsonrpcCall("GenomeComparisonSDK.build_pangenome", args, retType, true, true, jsonRpcContext);
         return res.get(0);
     }
 
@@ -161,8 +161,8 @@ public class GenomeComparisonClient {
      * <pre>
      * Compares the specified genomes and computes unique features and core features
      * </pre>
-     * @param   params   instance of type {@link us.kbase.genomecomparison.CompareGenomesParams CompareGenomesParams}
-     * @return   instance of type {@link us.kbase.genomecomparison.CompareGenomesResult CompareGenomesResult}
+     * @param   params   instance of type {@link us.kbase.genomecomparisonsdk.CompareGenomesParams CompareGenomesParams}
+     * @return   instance of type {@link us.kbase.genomecomparisonsdk.CompareGenomesResult CompareGenomesResult}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
@@ -170,7 +170,7 @@ public class GenomeComparisonClient {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
         TypeReference<List<CompareGenomesResult>> retType = new TypeReference<List<CompareGenomesResult>>() {};
-        List<CompareGenomesResult> res = caller.jsonrpcCall("GenomeComparison.compare_genomes", args, retType, true, false, jsonRpcContext);
+        List<CompareGenomesResult> res = caller.jsonrpcCall("GenomeComparisonSDK.compare_genomes", args, retType, true, false, jsonRpcContext);
         return res.get(0);
     }
 }

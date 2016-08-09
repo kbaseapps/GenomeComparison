@@ -103,7 +103,7 @@ class _JSONObjectEncoder(_json.JSONEncoder):
         return _json.JSONEncoder.default(self, obj)
 
 
-class GenomeComparison(object):
+class GenomeComparisonSDK(object):
 
     def __init__(self, url=None, timeout=30 * 60, user_id=None,
                  password=None, token=None, ignore_authrc=False,
@@ -174,14 +174,14 @@ class GenomeComparison(object):
     def build_pangenome(self, input, json_rpc_context = None):
         if json_rpc_context and type(json_rpc_context) is not dict:
             raise ValueError('Method build_pangenome: argument json_rpc_context is not type dict as required.')
-        resp = self._call('GenomeComparison.build_pangenome',
+        resp = self._call('GenomeComparisonSDK.build_pangenome',
                           [input], json_rpc_context)
         return resp[0]
   
     def compare_genomes(self, params, json_rpc_context = None):
         if json_rpc_context and type(json_rpc_context) is not dict:
             raise ValueError('Method compare_genomes: argument json_rpc_context is not type dict as required.')
-        resp = self._call('GenomeComparison.compare_genomes',
+        resp = self._call('GenomeComparisonSDK.compare_genomes',
                           [params], json_rpc_context)
         return resp[0]
  

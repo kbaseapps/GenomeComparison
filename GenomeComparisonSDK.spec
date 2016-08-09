@@ -1,9 +1,9 @@
 /*
-A KBase module: GenomeComparison
+A KBase module: GenomeComparisonSDK
 This sample module contains one small method - filter_contigs.
 */
 
-module GenomeComparison {
+module GenomeComparisonSDK {
     typedef structure {
 		list<string> genome_refs;
 		string genomeset_ref;
