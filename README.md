@@ -1,2 +1,6 @@
+[![Build Status](https://travis-ci.org/kbaseapps/GenomeComparison.svg?branch=master)](https://travis-ci.org/kbaseapps/GenomeComparison)
+
 # GenomeComparison
-This module contains the code for some comparative genomics functions in KBase.
+---
+
+This is the basic readme for this module. This module contains an example method that counts the contigs in a contig set.

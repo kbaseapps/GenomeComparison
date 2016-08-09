@@ -1,0 +1,98 @@
+{
+  "name" : "Compute Pangenome",
+  "ver" : "1.0.0",
+  "authors" : [ ],
+  "contact" : "help@kbase.us",
+  "visble" : true,
+  "categories" : ["active", "comparative_genomics"],
+  "widgets" : {
+    "input" : null,
+    "output" : "kbasePanGenome"
+  },
+  "parameters" : [ {
+    "id" : "input_genomeset",
+    "optional" : true,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : [ "KBaseSearch.GenomeSet" ]
+    }
+  }, {
+    "id" : "input_genomes",
+    "optional" : true,
+    "advanced" : false,
+    "allow_multiple" : true,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : [ "KBaseGenomes.Genome","KBaseGenomeAnnotations.GenomeAnnotation" ]
+    }
+  }, {
+    "id" : "output_pangenome",
+    "optional" : false,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : [ "KBaseGenomes.Pangenome" ],
+      "is_output_name":true
+    }
+  } ],
+  "behavior" : {
+    "service-mapping" : {
+      "url" : "",
+      "name" : "GenomeComparison",
+      "method" : "build_pangenome",
+      "input_mapping" : [
+        {
+          "input_parameter": "input_genomeset",
+          "target_property": "genomeset_ref",
+	  "target_type_transform": "ref"
+        },
+        {
+          "input_parameter": "input_genomes",
+          "target_property": "genome_refs",
+	  "target_type_transform": "list<ref>"
+        },
+        {
+          "input_parameter": "output_pangenome",
+          "target_property": "output_id"
+        },
+        {
+          "narrative_system_variable": "workspace",
+          "target_property": "workspace"
+        }
+      ],
+      "output_mapping" : [
+                {
+                    "narrative_system_variable": "workspace",
+                    "target_property": "ws"
+                },
+		{
+		    "narrative_system_variable": "workspace",
+		    "target_property": "workspace_name"
+		},
+		{
+		    "service_method_output_path": [0,"report_name"],
+		    "target_property": "report_name"
+		},
+		{
+		    "service_method_output_path": [0,"report_ref"],
+		    "target_property": "report_ref"
+		},
+		{
+		    "constant_value": "16",
+		    "target_property": "report_window_line_height"
+		},
+	        {
+		    "input_parameter": "output_pangenome",
+		    "target_property": "name"
+                }
+      ]
+    }
+  },
+  "job_id_output_field": "docker"
+}
