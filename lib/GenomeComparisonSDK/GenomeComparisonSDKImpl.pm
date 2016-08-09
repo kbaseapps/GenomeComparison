@@ -197,12 +197,11 @@ sub util_get_genome {
 			die "Genome failed to load!";
 		}
 		$genome = $self->util_from_json(pop(@{$output}));
-		print "Feature count:".@{$genome->{features}}."\n";
-		delete $genome->{contigobj};
+		#delete $genome->{contigobj};
 	} else {
 		$genome=$wsClient->get_objects([$self->util_configure_ws_id($ref)])->[0]{data};
 	}
-	$genome->{_reference} = $info->[6]."/".$info->[0]."/".$info->[4];
+	#$genome->{_reference} = $info->[6]."/".$info->[0]."/".$info->[4];
 	return $genome;
 }
 #END_HEADER
@@ -371,15 +370,16 @@ sub build_pangenome
     	my $genepairs;
     	my $bestorthos = [];
 	my $currgenome = undef;
-	eval {
+#	eval {
 	    print "Loading genome ".$currgenome_name."\n";
 	    $currgenome = $self->util_get_genome($wsClient,$token,$currgenome_name);
-	    $currgenome_ref = $currgenome->{_reference};
+	    print "Feature count:".@{$currgenome->{features}}."\n";
+	    $currgenome_ref = $currgenome_name;
 	    push @{$provenance->[0]->{'input_ws_objects'}}, $currgenome_name;
-	};
-	if ($@) {
-	    die "Error loading genome from workspace:\n".$@;
-	}
+#	};
+#	if ($@) {
+#	    die "Error loading genome from workspace:\n".$@;
+#	}
 	
     	push(@{$pangenome->{genome_refs}},$currgenome_ref);
     	if ($i == 1) {
@@ -389,6 +389,7 @@ sub build_pangenome
     	my $ftrs = $currgenome->{features};
     	for (my $j=0; $j < @{$ftrs}; $j++) {
     		my $feature = $ftrs->[$j];
+    		print "Gene:".$feature->{id}."\n";
     		if (defined($feature->{protein_translation})) {
     			print "Translation for:".$feature->{id}."\n";
     			$proteins->{$feature->{id}} = $feature->{protein_translation};
@@ -441,7 +442,6 @@ sub build_pangenome
     				$bestorthos->[$j] = -1;
     			} else {
     				$bestorthos->[$j] = $bestortho;
-    				print "Adding ortho:".$ftrs->[$j]->{id}."\n";
     				push(@{$pangenome->{orthologs}->[$bestortho]->{orthologs}},[$ftrs->[$j]->{id},0,$currgenome_ref]);
     			}
     		}
