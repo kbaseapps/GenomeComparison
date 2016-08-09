@@ -383,7 +383,6 @@ sub build_pangenome
 	
     	push(@{$pangenome->{genome_refs}},$currgenome_ref);
     	if ($i == 1) {
-    		print "Scientific name:".$currgenome->{scientific_name}."\n";
     		my $array = [split(/\s/,$currgenome->{scientific_name})];
     		$pangenome->{name} = $array->[0]." pangenome";
     	}
@@ -391,6 +390,7 @@ sub build_pangenome
     	for (my $j=0; $j < @{$ftrs}; $j++) {
     		my $feature = $ftrs->[$j];
     		if (defined($feature->{protein_translation})) {
+    			print "Translation for:".$feature->{id}."\n";
     			$proteins->{$feature->{id}} = $feature->{protein_translation};
     			my $matchortho;
     			my $bestortho;
@@ -411,7 +411,7 @@ sub build_pangenome
 	    				}
     				}
     				if (defined($gkdb->{$kmer}) && !defined($gkdb->{$kmer}->{-1})) {
-    					if (keys(%{$gkdb->{$kmer}}) >= 5) {
+    					if (keys(%{$gkdb->{$kmer}}) >= 1000) {
     						my $keylist = [keys(%{$gkdb->{$kmer}})];
     						for (my $m=0; $m < 4; $m++) {
     							for (my $n=($m+1); $n < 5; $n++) {
@@ -441,6 +441,7 @@ sub build_pangenome
     				$bestorthos->[$j] = -1;
     			} else {
     				$bestorthos->[$j] = $bestortho;
+    				print "Adding ortho:".$ftrs->[$j]->{id}."\n";
     				push(@{$pangenome->{orthologs}->[$bestortho]->{orthologs}},[$ftrs->[$j]->{id},0,$currgenome_ref]);
     			}
     		}
