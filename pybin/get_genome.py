@@ -6,8 +6,8 @@ import sys
 import json
 import re
 import doekbase.data_api
-from doekbase.data_api.annotation.genome_annotation.api import GenomeAnnotationAPI , GenomeAnnotationClientAPI
-from doekbase.data_api.sequence.assembly.api import AssemblyAPI , AssemblyClientAPI
+from doekbase.data_api.annotation.genome_annotation.api import GenomeAnnotationAPI
+from doekbase.data_api.sequence.assembly.api import AssemblyAPI
 
 ga = GenomeAnnotationAPI({
 	'workspace_service_url' : sys.argv[1],
@@ -74,6 +74,7 @@ if success == 1:
 		'source' : 'KBase',
 		'source_id' : sys.argv[6],
 		'md5' : "",
+		'_reference' : ga.get_assembly(1),
 		'type' : "Genome",
 		'contigs' : []
 	};
@@ -142,7 +143,9 @@ if success == 1:
 		if 'feature_type' in ftrdata.keys():
 			newfeature = {'id' : ftrid,'type' : ftrdata['feature_type'],'function' : "Unknown",'location' : []}
 			array = ftrid.split("_");
-			protid = 'protein_'+array[1];
+			protid = ftrid;
+			if array[0] == 'CDS' and protid not in prot.keys():
+				protid = 'protein_'+array[1];
 			if array[0] == 'CDS' and protid in prot.keys():
 				newfeature['protein_translation'] = prot[protid]['protein_amino_acid_sequence']
 			if 'feature_ontology_terms' in ftrdata.keys():
