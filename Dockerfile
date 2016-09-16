@@ -8,24 +8,6 @@ MAINTAINER KBase Developer
 # RUN apt-get update
 RUN cpanm -i Config::IniFiles
 
-RUN \
-  . /kb/dev_container/user-env.sh && \
-  cd /kb/dev_container/modules && \
-  rm -rf jars && \
-  git clone https://github.com/kbase/jars && \
-  rm -rf kb_sdk && \
-  git clone https://github.com/kbase/kb_sdk -b develop && \
-  cd /kb/dev_container/modules/jars && \
-  make deploy && \
-  cd /kb/dev_container/modules/kb_sdk && \
-  make && make deploy
-RUN \
-  . /kb/dev_container/user-env.sh && \
-  cd /kb/dev_container/modules && \
-  rm -rf data_api && \
-  git clone https://github.com/kbase/data_api -b develop && \
-  pip install --upgrade /kb/dev_container/modules/data_api
-
 # -----------------------------------------
 
 COPY ./ /kb/module

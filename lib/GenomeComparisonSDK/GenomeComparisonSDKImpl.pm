@@ -19,6 +19,7 @@ This sample module contains one small method - filter_contigs.
 #BEGIN_HEADER
 use Bio::KBase::AuthToken;
 use Bio::KBase::workspace::Client;
+use GenomeAnnotationAPI::GenomeAnnotationAPIClient;
 use Config::IniFiles;
 use JSON::XS;
 
@@ -185,25 +186,26 @@ sub util_from_json {
 }
 
 sub util_get_genome {
-	my ($self,$wsClient,$token,$ref) = @_;
-	my $info_array = $wsClient->get_object_info([$self->util_configure_ws_id($ref)],0);
-	my $info = $info_array->[0];
-	my $genome;
-	if ($info->[2] =~ /GenomeAnnotation/) {
-		print "Loading new genome!\n";
-		my $output = $self->util_runexecutable($self->{"Data_API_script_directory"}.'get_genome.py "'.$self->{'workspace-url'}.'" "'.$self->{'shock-url'}.'" "'.$self->{"handle-service-url"}.'" "'.$token.'" "'.$info->[6]."/".$info->[0]."/".$info->[4].'" "'.$info->[1].'" 1');
-		my $last = pop(@{$output});
-		if ($last !~ m/SUCCESS/) {
-			die "Genome failed to load!";
-		}
-		$genome = $self->util_from_json(pop(@{$output}));
-		#delete $genome->{contigobj};
-	} else {
-		$genome=$wsClient->get_objects([$self->util_configure_ws_id($ref)])->[0]{data};
-	}
-	#$genome->{_reference} = $info->[6]."/".$info->[0]."/".$info->[4];
-	return $genome;
+	my ($self,$ref) = @_;
+	my $output = $self->util_ga_client()->get_genome_v1({
+		genomes => [{
+			"ref" => $ref
+		}],
+		ignore_errors => 1,
+		no_data => 0,
+		no_metadata => 1
+	});
+	return $output->{genomes}->[0]->{data};
 }
+
+sub util_ga_client {
+	my ($self,$input) = @_;
+	if (!defined($self->{_gaclient})) {
+		$self->{_gaclient} = new GenomeAnnotationAPI::GenomeAnnotationAPIClient($ENV{ SDK_CALLBACK_URL });
+	}
+	return $self->{_gaclient};
+}
+
 #END_HEADER
 
 sub new
@@ -221,8 +223,7 @@ sub new
     $self->{'shock-url'} = $cfg->val('GenomeComparisonSDK','shock-url');
     $self->{'handle-service-url'} = $cfg->val('GenomeComparisonSDK','handle-service-url');
     $self->{'scratch'} = $cfg->val('GenomeComparisonSDK','scratch');
-    $self->{'Data_API_script_directory'} = $cfg->val('GenomeComparisonSDK','Data_API_script_directory');
-	if (!defined($self->{'workspace-url'})) {
+ 	if (!defined($self->{'workspace-url'})) {
 		die "no workspace-url defined";
 	}
     #END_CONSTRUCTOR
@@ -372,7 +373,7 @@ sub build_pangenome
 	my $currgenome = undef;
 #	eval {
 	    print "Loading genome ".$currgenome_name."\n";
-	    $currgenome = $self->util_get_genome($wsClient,$token,$currgenome_name);
+	    $currgenome = $self->util_get_genome($currgenome_name);
 	    print "Feature count:".@{$currgenome->{features}}."\n";
 	    $currgenome_ref = $currgenome_name;
 	    push @{$provenance->[0]->{'input_ws_objects'}}, $currgenome_name;
@@ -791,7 +792,7 @@ sub compare_genomes
     foreach my $genome_ref (@{$genome_refs}) {
 	my $g;
 	eval {
-	    $g = $self->util_get_genome($wsClient,$token,$genome_ref);
+	    $g = $self->util_get_genome($genome_ref);
 	};
 	if ($@) {
 	    die "Error loading genome from workspace:\n".$@;
