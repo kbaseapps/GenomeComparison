@@ -1,7 +1,7 @@
 {
   "name" : "Genome Comparison from Pangenome",
   "ver" : "1.0.0",
-  "authors" : [ ],
+  "authors" : [ "dejongh" ],
   "contact" : "help@kbase.us",
   "visble" : true,
   "categories" : ["active", "comparative_genomics"],
