@@ -36,10 +36,6 @@ sub new
 {
     my($class, $url, @args) = @_;
     
-    if (!defined($url))
-    {
-	$url = 'https://kbase.us/services/njs_wrapper';
-    }
 
     my $self = {
 	client => AssemblyUtil::AssemblyUtilClient::RpcClient->new,
@@ -61,7 +57,7 @@ sub new
     }
     my $service_version = 'release';
     if (exists $arg_hash{"service_version"}) {
-        $service_version = $arg_hash{"async_version"};
+        $service_version = $arg_hash{"service_version"};
     }
     $self->{service_version} = $service_version;
 
@@ -104,20 +100,19 @@ sub new
     # We create an auth token, passing through the arguments that we were (hopefully) given.
 
     {
-	my $token = Bio::KBase::AuthToken->new(@args);
-	
-	if (!$token->error_message)
-	{
-	    $self->{token} = $token->token;
-	    $self->{client}->{token} = $token->token;
+	my %arg_hash2 = @args;
+	if (exists $arg_hash2{"token"}) {
+	    $self->{token} = $arg_hash2{"token"};
+	} elsif (exists $arg_hash2{"user_id"}) {
+	    my $token = Bio::KBase::AuthToken->new(@args);
+	    if (!$token->error_message) {
+	        $self->{token} = $token->token;
+	    }
 	}
-        else
-        {
-	    #
-	    # All methods in this module require authentication. In this case, if we
-	    # don't have a token, we can't continue.
-	    #
-	    die "Authentication failed: " . $token->error_message;
+	
+	if (exists $self->{token})
+	{
+	    $self->{client}->{token} = $self->{token};
 	}
     }
 
@@ -187,6 +182,7 @@ GetAssemblyParams is a reference to a hash where the following keys are defined:
 	filename has a value which is a string
 FastaAssemblyFile is a reference to a hash where the following keys are defined:
 	path has a value which is a string
+	assembly_name has a value which is a string
 
 </pre>
 
@@ -201,6 +197,7 @@ GetAssemblyParams is a reference to a hash where the following keys are defined:
 	filename has a value which is a string
 FastaAssemblyFile is a reference to a hash where the following keys are defined:
 	path has a value which is a string
+	assembly_name has a value which is a string
 
 
 =end text
@@ -259,7 +256,7 @@ sub _get_assembly_as_fasta_submit {
     }
     my $result = $self->{client}->call($self->{url}, $self->{headers}, {
         method => "AssemblyUtil._get_assembly_as_fasta_submit",
-        params => \@args}, context => $context);
+        params => \@args, context => $context});
     if ($result) {
         if ($result->is_error) {
             Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
@@ -368,7 +365,7 @@ sub _export_assembly_as_fasta_submit {
     }
     my $result = $self->{client}->call($self->{url}, $self->{headers}, {
         method => "AssemblyUtil._export_assembly_as_fasta_submit",
-        params => \@args}, context => $context);
+        params => \@args, context => $context});
     if ($result) {
         if ($result->is_error) {
             Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
@@ -408,9 +405,18 @@ SaveAssemblyParams is a reference to a hash where the following keys are defined
 	ftp_url has a value which is a string
 	workspace_name has a value which is a string
 	assembly_name has a value which is a string
+	external_source has a value which is a string
+	external_source_id has a value which is a string
+	taxon_ref has a value which is a string
+	min_contig_length has a value which is an int
+	contig_info has a value which is a reference to a hash where the key is a string and the value is an AssemblyUtil.ExtraContigInfo
 FastaAssemblyFile is a reference to a hash where the following keys are defined:
 	path has a value which is a string
+	assembly_name has a value which is a string
 ShockNodeId is a string
+ExtraContigInfo is a reference to a hash where the following keys are defined:
+	is_circ has a value which is an int
+	description has a value which is a string
 
 </pre>
 
@@ -426,9 +432,18 @@ SaveAssemblyParams is a reference to a hash where the following keys are defined
 	ftp_url has a value which is a string
 	workspace_name has a value which is a string
 	assembly_name has a value which is a string
+	external_source has a value which is a string
+	external_source_id has a value which is a string
+	taxon_ref has a value which is a string
+	min_contig_length has a value which is an int
+	contig_info has a value which is a reference to a hash where the key is a string and the value is an AssemblyUtil.ExtraContigInfo
 FastaAssemblyFile is a reference to a hash where the following keys are defined:
 	path has a value which is a string
+	assembly_name has a value which is a string
 ShockNodeId is a string
+ExtraContigInfo is a reference to a hash where the following keys are defined:
+	is_circ has a value which is an int
+	description has a value which is a string
 
 
 =end text
@@ -489,7 +504,7 @@ sub _save_assembly_from_fasta_submit {
     }
     my $result = $self->{client}->call($self->{url}, $self->{headers}, {
         method => "AssemblyUtil._save_assembly_from_fasta_submit",
-        params => \@args}, context => $context);
+        params => \@args, context => $context});
     if ($result) {
         if ($result->is_error) {
             Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
@@ -523,7 +538,7 @@ sub status
     }
     my $result = $self->{client}->call($self->{url}, $self->{headers}, {
         method => "AssemblyUtil._status_submit",
-        params => \@args}, context => $context);
+        params => \@args, context => $context});
     if ($result) {
         if ($result->is_error) {
             Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
@@ -627,6 +642,7 @@ sub _validate_version {
 <pre>
 a reference to a hash where the following keys are defined:
 path has a value which is a string
+assembly_name has a value which is a string
 
 </pre>
 
@@ -636,6 +652,7 @@ path has a value which is a string
 
 a reference to a hash where the following keys are defined:
 path has a value which is a string
+assembly_name has a value which is a string
 
 
 =end text
@@ -767,6 +784,47 @@ a string
 
 
 
+=head2 ExtraContigInfo
+
+=over 4
+
+
+
+=item Description
+
+Structure for setting additional Contig information per contig
+    is_circ - flag if contig is circular, 0 is false, 1 is true, missing
+              indicates unknown
+    description - if set, sets the description of the field in the assembly object
+                  which may override what was in the fasta file
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+is_circ has a value which is an int
+description has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+is_circ has a value which is an int
+description has a value which is a string
+
+
+=end text
+
+=back
+
+
+
 =head2 SaveAssemblyParams
 
 =over 4
@@ -780,11 +838,21 @@ Options supported:
     workspace_name - target workspace
     assembly_name - target object name
 
+    type - should be one of 'isolate', 'metagenome', (maybe 'transcriptome')
+
+    min_contig_length - if set and value is greater than 1, this will only include sequences
+                        with length greater or equal to the min_contig_length specified, discarding
+                        all other sequences
+
+    taxon_ref         - sets the taxon_ref if present
+
+    contig_info       - map from contig_id to a small structure that can be used to set the is_circular
+                        and description fields for Assemblies (optional)
+
 Uploader options not yet supported
     taxon_reference: The ws reference the assembly points to.  (Optional)
     source: The source of the data (Ex: Refseq)
     date_string: Date (or date range) associated with data. (Optional)
-    contig_information_dict: A mapping that has is_circular and description information (Optional)
 
 
 =item Definition
@@ -798,6 +866,11 @@ shock_id has a value which is an AssemblyUtil.ShockNodeId
 ftp_url has a value which is a string
 workspace_name has a value which is a string
 assembly_name has a value which is a string
+external_source has a value which is a string
+external_source_id has a value which is a string
+taxon_ref has a value which is a string
+min_contig_length has a value which is an int
+contig_info has a value which is a reference to a hash where the key is a string and the value is an AssemblyUtil.ExtraContigInfo
 
 </pre>
 
@@ -811,6 +884,11 @@ shock_id has a value which is an AssemblyUtil.ShockNodeId
 ftp_url has a value which is a string
 workspace_name has a value which is a string
 assembly_name has a value which is a string
+external_source has a value which is a string
+external_source_id has a value which is a string
+taxon_ref has a value which is a string
+min_contig_length has a value which is an int
+contig_info has a value which is a reference to a hash where the key is a string and the value is an AssemblyUtil.ExtraContigInfo
 
 
 =end text
