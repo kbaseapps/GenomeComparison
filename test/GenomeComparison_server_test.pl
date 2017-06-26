@@ -4,17 +4,19 @@ use Test::More;
 use Config::Simple;
 use Time::HiRes qw(time);
 use Bio::KBase::AuthToken;
-use Bio::KBase::workspace::Client;
+#use Bio::KBase::workspace::Client;
+use Workspace::WorkspaceClient;
 use GenomeComparisonSDK::GenomeComparisonSDKImpl;
 
 local $| = 1;
 my $token = $ENV{'KB_AUTH_TOKEN'};
-$ENV{'KB_DEPLOYMENT_CONFIG'} = "/Users/chenry/code/GenomeComparison/localdeploy.cfg";
+#$ENV{'KB_DEPLOYMENT_CONFIG'} = "/Users/chenry/code/GenomeComparison/localdeploy.cfg";
 my $config_file = $ENV{'KB_DEPLOYMENT_CONFIG'};
 my $config = new Config::Simple($config_file)->get_block('GenomeComparisonSDK');
 my $ws_url = $config->{"workspace-url"};
 my $ws_name = undef;
-my $ws_client = new Bio::KBase::workspace::Client($ws_url,token => $token);
+#my $ws_client = new Bio::KBase::workspace::Client($ws_url,token => $token);
+my $ws_client = new Workspace::WorkspaceClient($ws_url,token => $token);
 my $auth_token = Bio::KBase::AuthToken->new(token => $token, ignore_authrc => 1);
 my $ctx = LocalCallContext->new($token, $auth_token->user_id);
 $GenomeComparisonSDK::GenomeComparisonSDKServer::CallContext = $ctx;
@@ -31,7 +33,7 @@ sub get_ws_name {
 
 eval {
 	print STDERR "Loading genome and contigs ...\n";
-	
+
         my $mg_contigs = "kb|g.490.c.0";
 	open (CONTIG, "kb_g.490.contigset.json");
         my $obj = <CONTIG>;
@@ -68,7 +70,7 @@ eval {
 
 	print STDERR "Getting ready ...\n";
 
-    eval { 
+    eval {
 	my $ret = $impl->build_pangenome({workspace=>get_ws_name(), output_id=>"pg.1", genome_refs=>[get_ws_name()."/".$mg_genome,get_ws_name()."/".$mp_genome]});
 	use Data::Dumper;
 	print &Dumper($ret);
@@ -76,7 +78,7 @@ eval {
     if ($@) {
 	print("Error while running build_pangenome: $@\n");
     }
-    eval { 
+    eval {
 	my $ret = $impl->compare_genomes({workspace=>get_ws_name(), output_id=>"gc.1", pangenome_ref=>get_ws_name()."/pg.1"});
 	use Data::Dumper;
 	print &Dumper($ret);

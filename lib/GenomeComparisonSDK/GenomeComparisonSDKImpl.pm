@@ -2,8 +2,10 @@ package GenomeComparisonSDK::GenomeComparisonSDKImpl;
 use strict;
 use Bio::KBase::Exceptions;
 # Use Semantic Versioning (2.0.0-rc.1)
-# http://semver.org 
-our $VERSION = "0.1.0";
+# http://semver.org
+our $VERSION = '0.0.2';
+our $GIT_URL = 'https://github.com/janakagithub/GenomeComparison';
+our $GIT_COMMIT_HASH = '511ce46a3a918470c2b4b063215c1928f6f76769';
 
 =head1 NAME
 
@@ -18,7 +20,8 @@ This sample module contains one small method - filter_contigs.
 
 #BEGIN_HEADER
 use Bio::KBase::AuthToken;
-use Bio::KBase::workspace::Client;
+#use Bio::KBase::workspace::Client;
+use Workspace::WorkspaceClient;
 use GenomeAnnotationAPI::GenomeAnnotationAPIClient;
 use Config::IniFiles;
 use JSON::XS;
@@ -133,13 +136,13 @@ sub createEquation {
 		    my $coef = -1*$rgtHash->{$sortedCpd->[$i]}->{$comps->[$j]};
 		    my $reactcode = "(".$coef.") ".$printId.$compartment;
 		    push(@reactcode,$reactcode);
-		    
+
 		} elsif ($rgtHash->{$sortedCpd->[$i]}->{$comps->[$j]} > 0) {
 		    my $coef = $rgtHash->{$sortedCpd->[$i]}->{$comps->[$j]};
 
 		    my $productcode .= "(".$coef.") ".$printId.$compartment;
 		    push(@productcode, $productcode);
-		} 
+		}
 	    }
 	}
 
@@ -310,7 +313,7 @@ sub build_pangenome
     my($return);
     #BEGIN build_pangenome
     my $token=$ctx->token;
-    my $wsClient=Bio::KBase::workspace::Client->new($self->{'workspace-url'},token=>$token);
+    my $wsClient=Workspace::WorkspaceClient->new($self->{'workspace-url'},token=>$token);
     my $provenance = [{}];
     $provenance = $ctx->provenance if defined $ctx->provenance;
 
@@ -381,7 +384,7 @@ sub build_pangenome
 #	if ($@) {
 #	    die "Error loading genome from workspace:\n".$@;
 #	}
-	
+
     	push(@{$pangenome->{genome_refs}},$currgenome_ref);
     	if ($i == 1) {
     		my $array = [split(/\s/,$currgenome->{scientific_name})];
@@ -622,10 +625,10 @@ sub compare_genomes
     my($return);
     #BEGIN compare_genomes
     my $token=$ctx->token;
-    my $wsClient=Bio::KBase::workspace::Client->new($self->{'workspace-url'},token=>$token);
+    my $wsClient=Workspace::WorkspaceClient->new($self->{'workspace-url'},token=>$token);
     my $provenance = [{}];
     $provenance = $ctx->provenance if defined $ctx->provenance;
-    
+
     my $orthos;
     my $members = {};
     my $genome_refs;
@@ -697,7 +700,7 @@ sub compare_genomes
 		}
 	    }
 	    if (!defined($family)) {
-		$family = $plist->[$i];	
+		$family = $plist->[$i];
 	    }
 	    $orthos->{$family}->{$genome_refs->[0]}->{$plist->[$i]} = 100;
 	    $members->{$genome_refs->[0]}->{$plist->[$i]} = $family;
@@ -721,7 +724,7 @@ sub compare_genomes
 		    }
 		}
 		if (!defined($family)) {
-		    $family = $oplist->[$i];	
+		    $family = $oplist->[$i];
 		}
 		$orthos->{$family}->{$genome_refs->[1]}->{$oplist->[$i]} = 100;
 		$members->{$genome_refs->[1]}->{$oplist->[$i]} = $family;
@@ -955,9 +958,9 @@ sub compare_genomes
 
 
 
-=head2 version 
+=head2 status
 
-  $return = $obj->version()
+  $return = $obj->status()
 
 =over 4
 
@@ -979,14 +982,19 @@ $return is a string
 
 =item Description
 
-Return the module version. This is a Semantic Versioning number.
+Return the module status. This is a structure including Semantic Versioning number, state and git info.
 
 =back
 
 =cut
 
-sub version {
-    return $VERSION;
+sub status {
+    my($return);
+    #BEGIN_STATUS
+    $return = {"state" => "OK", "message" => "", "version" => $VERSION,
+               "git_url" => $GIT_URL, "git_commit_hash" => $GIT_COMMIT_HASH};
+    #END_STATUS
+    return($return);
 }
 
 =head1 TYPES
