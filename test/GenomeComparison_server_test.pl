@@ -7,6 +7,7 @@ use Bio::KBase::AuthToken;
 #use Bio::KBase::workspace::Client;
 use Workspace::WorkspaceClient;
 use GenomeComparisonSDK::GenomeComparisonSDKImpl;
+use GenomeAnnotationAPI::GenomeAnnotationAPIClient;
 
 local $| = 1;
 my $token = $ENV{'KB_AUTH_TOKEN'};
@@ -21,6 +22,7 @@ my $auth_token = Bio::KBase::AuthToken->new(token => $token, ignore_authrc => 1)
 my $ctx = LocalCallContext->new($token, $auth_token->user_id);
 $GenomeComparisonSDK::GenomeComparisonSDKServer::CallContext = $ctx;
 my $impl = new GenomeComparisonSDK::GenomeComparisonSDKImpl();
+my $ga_client = new GenomeAnnotationAPI::GenomeAnnotationAPIClient($ENV{ SDK_CALLBACK_URL });
 
 sub get_ws_name {
     if (!defined($ws_name)) {
@@ -49,7 +51,7 @@ eval {
 	close GENOME;
 	my $decoded2 = JSON::XS::decode_json($obj2);
 	$decoded2->{"contigset_ref"} = get_ws_name()."/".$mg_contigs;
-        $ws_client->save_objects({'workspace' => get_ws_name(), 'objects' => [{'type' => 'KBaseGenomes.Genome', 'name' => $mg_genome, 'data' => $decoded2}]});
+        $ga_client->save_one_genome_v1({'workspace' => get_ws_name(), 'name' => $mg_genome, 'data' => $decoded2});
 
         my $mp_contigs = "kb|g.20403.c.0";
 	open (CONTIG, "kb_g.20403.contigset.json");
@@ -66,7 +68,7 @@ eval {
 	close GENOME;
 	my $decoded2 = JSON::XS::decode_json($obj4);
 	$decoded2->{"contigset_ref"} = get_ws_name()."/".$mp_contigs;
-        $ws_client->save_objects({'workspace' => get_ws_name(), 'objects' => [{'type' => 'KBaseGenomes.Genome', 'name' => $mp_genome, 'data' => $decoded2}]});
+        $ga_client->save_one_genome_v1({'workspace' => get_ws_name(), 'name' => $mp_genome, 'data' => $decoded2});
 
 	print STDERR "Getting ready ...\n";
 

@@ -393,7 +393,7 @@ sub build_pangenome
     	my $ftrs = $currgenome->{features};
     	for (my $j=0; $j < @{$ftrs}; $j++) {
     		my $feature = $ftrs->[$j];
-    		if (defined($feature->{protein_translation})) {
+    		if (defined($feature->{protein_translation}) && $feature->{id} !~ m/CDS/) {
     			$proteins->{$feature->{id}} = $feature->{protein_translation};
     			my $matchortho;
     			my $bestortho;
@@ -928,7 +928,7 @@ sub compare_genomes
 		      }]});
 
     my $report = "GenomeComparison saved to $workspace_name/$id\n";
-    my $reportObj = { "objects_created"=>[{'ref'=>"$workspace_name/$id", "description"=>"GenomeCompmarison"}],
+    my $reportObj = { "objects_created"=>[{'ref'=>"$workspace_name/$id", "description"=>"GenomeComparison"}],
 		      "text_message"=>$report };
     my $reportName = "genomecomparison_report_${id}";
 
