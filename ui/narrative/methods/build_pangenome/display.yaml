@@ -4,14 +4,10 @@
 name     : Compute Pangenome
 
 tooltip  : |
-    Compute pangenome of a set of individual genomes
+    Allows users to compute a pangenome from a set of individual genomes.
 
 screenshots :
-
-    - compute_pangenome_input.png
-    - compute_pangenome_output1.png
-    - compute_pangenome_output2.png
-    - compute_pangenome_output3.png
+    []
 
 icon: kb-purple.png
 
@@ -39,37 +35,33 @@ parameters :
         ui-name : |
             Genome(s)
         short-hint : |
-            Add several Genomes one at a time to compose a set (optional - but then a GenomeSet must be provided in the previous input)
-        long-hint  : |
-            Add several Genomes one at a time to compose a set (optional - but then a GenomeSet must be provided in the previous input)
+            Add multiple Genomes, one at a time, to compose a set. Alternatively, a GenomeSet could be provided in the "GenomeSet" selection box.
 
     input_genomeset :
         ui-name : |
-            Genome Set
+            GenomeSet
         short-hint : |
-            A set of references to genomes stored in KBase (optional - but then at least two genomes must be provided in the next input)
-        long-hint  : |
-            A set of references to genomes stored in KBase (optional - but then at least two genomes must be provided in the next input)
+            A set of multiple genomes (GenomeSet object) stored in KBase. Alternatively, at least two Genomes could be provided in the "Genome(s)" selection box.
 
     output_pangenome :
         ui-name : |
-            Pangenome ID
+            Pangenome Name
         short-hint : |
-            A list of all distinct protein families identified in a set of input genome sequences, as well as the IDs of the proteins present in each family
-        long-hint  : |
-            A list of all distinct protein families identified in a set of input genome sequences, as well as the IDs of the proteins present in each family
-
+            Provide a name for the Pangenome.
 
 description : |
 
-    <p>It is often useful to group all proteins present in an input set of genomes into families based on sequence homology. This permits a powerful set of comparisons to be performed, such as evaluating the consistency of functional assignments for highly homologous proteins, or evaluating the extent to which each protein family has been conserved across the entire input set of genomes. Protein families present in all input genomes are said to be "core" protein families, while non-conserved families are peripheral and likely linked to more phylogenetically recent adaptations by a species to its environment. Protein families present in any of the input genomes constitute the pangenome of this set.</p>
-    <p>The current KBase algorithm to compute a protein pangenome is a k-mer-based method, which offers the advantage of greater speed at the cost of lower resolution of protein sequence differences. Specifically, we identify all the distinct k-mers of length 8 occurring in each protein of each genome. If a k-mer occurs in more than five proteins within a single genome, we remove the k-mer from consideration. Next, if we find that two proteins either within the same genome or across multiple genomes share at least five k-mers in common, we lump the proteins together into a single protein family, and we lump the k-mer databases for the proteins together into a single k-mer database for the protein family. We proceed in this manner, analyzing additional proteins and building up our list of distinct protein families and their associated k-mer databases on the fly. Once all genomes have been analyzed in this way, we rescore every protein family, breaking up families that are overly diverse and recomputing the number of k-mer matches between each protein and its assigned family. All data is then stored in the Pangenome object.</p>
-    <p>One limitation of a protein k-mer based approach is that it does not work for distantly related species. For example, while B. subtilis and E. coli share many proteins with common functions, there are very few k-mers of length 8 shared between proteins in these species. For this reason, our k-mer-based protein family identification algorithm will fail to construct accurate families for more distant organisms. In this analysis, it is important that all the genomes included in the input set be phylogenetically close (approximately 90% 16S nucleotide identity).</p>
-    <p>We strongly encourage users to build a phylogenetically closely related set of genomes using the app "Insert Genomes into Species Tree" or from the method "Build Genome Set From Tree".  The output for this method consists of a pangenome data object as well as a summary data table with three tabs displayed in the Narrative. The first tab corresponds to an overview of the results including the total number of proteins assigned to families and singletons and the list of genomes considered in the analysis. The second tab, ‘Shared homolog families’, shows a table of counts of protein families found in common between all pairs of genomes in the analysis. The third tab, ‘Protein families’, displays all individual sequence families determined in the pangenome analysis and includes putative functional assignments, the number of proteins assigned to each family and the number of genomes those proteins were found in.
-    </p>
+    <p>The Compute Pangenome App allows users to group all proteins present in an input set of genomes into families based on sequence homology. A Pangenome in KBase lists of all distinct protein families identified in a set of input genome sequences, as well as the IDs of the proteins present in each family. This grouping permits a powerful set of comparisons to be performed, such as evaluating the consistency of functional assignments for highly homologous proteins, or evaluating the extent to which each protein family has been conserved across the entire input set of genomes. Protein families present in all input genomes are said to be "core" protein families, while non-conserved families are peripheral, sometimes termed “accessory proteins.” These proteins are likely linked to more phylogenetically recent adaptations by a species to its environment. Protein families present in any of the input genomes constitute the pangenome of this set.</p>
 
-    <p><strong>Team members who developed & deployed algorithm in KBase:</strong>
-    Chris Henry, Janaka Edirisinghe, Sam Seaver, Neal Conrad. For questions, <a href="mailto:help@kbase.us">e-mail help@kbase.us</a></p>
+    <p>Prior to using this tool, we strongly encourage users to build a phylogenetically closely related set of genomes using the <a href=”https://narrative.kbase.us/#catalog/apps/SpeciesTreeBuilder/insert_set_of_genomes_into_species_tree/release”>Insert Genome into Species Tree</a> App. Ideally, the set of genomes should share properties (e.g., belonging to a common taxonomic lineage, having similar core metabolisms) because the pangenome analysis will elucidate similarities and differences in the protein families across this set of genomes. It is important that all the genomes included in the input set be phylogenetically close (e.g. same family level: ~90% 16S nucleotide identity; ~80% whole-genome aligned fraction identity).</p>
+
+    <p>The current KBase algorithm to compute a protein pangenome is a k-mer-based method, which offers the advantage of greater speed at the cost of lower resolution of protein sequence differences. Specifically, we identify all the distinct k-mers of length 8 occurring in each protein of each genome. If a k-mer occurs in more than five proteins within a single genome, we remove the k-mer from consideration. Next, if we find that two proteins either within the same genome or across multiple genomes share at least five k-mers in common, we lump the proteins together into a single protein family, and we lump the k-mer databases for the proteins together into a single k-mer database for the protein family. We proceed in this manner, analyzing additional proteins and building up our list of distinct protein families and their associated k-mer databases on the fly. Once all genomes have been analyzed in this way, we rescore every protein family, breaking up families that are overly diverse and recomputing the number of k-mer matches between each protein and its assigned family. All data is then stored in the Pangenome object.</p>
+
+    <p>One limitation of a protein k-mer based approach is that it does not work for distantly related species. For example, while <i>B. subtilis</i> and <i>E. coli</i> share many proteins with common functions, there are very few k-mers of length 8 shared between proteins in these species. For this reason, our k-mer-based protein family identification algorithm will fail to construct accurate families for more distant organisms. In this analysis, it is important that all the genomes included in the input set be phylogenetically close (e.g. same family level: ~90% 16S nucleotide identity; ~80% whole-genome aligned fraction identity).</p>
+
+    <p>The output for this App consists of a Pangenome object and a summary data table with three tabs displayed in the Narrative. The first tab corresponds to an overview of the results including the total number of proteins assigned to families and singletons and the list of genomes considered in the analysis. The second tab, ‘Shared homolog families’, shows a table of counts of protein families found in common between all pairs of genomes in the analysis. The third tab, ‘Protein families’, displays all individual sequence families determined in the pangenome analysis and includes putative functional assignments, the number of proteins assigned to each family, and the number of genomes those proteins were found in.</p>
+
+    <p><strong>Team members who developed & deployed algorithm in KBase:</strong> Chris Henry, Janaka Edirisinghe, Sam Seaver, and Neal Conrad. For questions, please <a href=”http://kbase.us/contact-us/”>contact us</a>.</p>
 
 publications :
     -
