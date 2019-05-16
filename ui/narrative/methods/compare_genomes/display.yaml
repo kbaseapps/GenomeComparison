@@ -4,10 +4,10 @@
 name     : Compare Genomes from Pangenome
 
 tooltip  : |
-    Compare isofunctional and homologous gene families for all genomes in the pangenome.
+    Compare isofunctional and homologous gene families for all genomes in a Pangenome.
 
 screenshots :
-    - genome_comparison_from_pangenome_input.png
+    []
 
 icon: kb-purple.png
 
@@ -33,9 +33,7 @@ parameters :
         ui-name : |
             Pangenome
         short-hint : |
-            A list of all distinct protein families identified in a set of input genome sequences, as well as the IDs of the proteins present in each family
-        long-hint  : |
-            A list of all distinct protein families identified in a set of input genome sequences, as well as the IDs of the proteins present in each family
+            A list of all distinct protein families identified in a set of input genome sequences, as well as the IDs of the proteins present in each family.
         placeholder : |
             Name of Pangenome
 
@@ -43,16 +41,18 @@ parameters :
         ui-name : |
             Genome Comparison
         short-hint : |
-            Set of all isofunctional and homologous protein families identified across the input set of genome sequences
-        long-hint  : |
-            Set of all isofunctional and homologous protein families identified across the input set of genome sequences
+            Set of all isofunctional and homologous protein families identified across the input set of genome sequences.
         placeholder : |
             Name of output Genome Comparison
 
 description : |
-    <p>In this genome comparison algorithm, all of the proteins present in an input Pangenome object are compared based on their function and sequence. This comparison groups proteins into  protein families putatively sharing function and sequence-similar protein families. This comparison can be used to identify groups of homologous proteins that are not consistently annotated, or identify consistently annotated proteins that lack significant sequence similarity. In many cases, this method supports the identification and correction of annotation errors. In other cases, this method supports the identification of new and interesting biology (see publications listed below).  Generally, this comparison is valuable for assessing the extent of conservation among an input set of genomes. It also support studies of how genomes have evolved and adapted to their distinctive environments.</p>
+    <p>In this genome comparison algorithm, all of the proteins present in an input Pangenome object are compared based on their function and sequence. This comparison groups proteins with similar sequences into families with putative functions and can be used to identify groups of homologous proteins with inconsistent annotations (i.e. correct annotation errors), or identify consistently annotated proteins that lack significant sequence similarity. Generally, this comparison method is valuable for: (i) assessing the extent of gene conservation among an input set of genomes, (ii) understanding how genomes have evolved and adapted to their distinctive environments, and (iii) identifying novel genes and interesting biology in the context of related genomes.</p>
 
-    <p>This comparison builds on the sequence-based homologous protein families identified in the input Pangenome object, extending the data by also identifying protein families with putatively similar functions. Protein families with putatively similar functions are assembled by looking for sets of proteins with identical functional assignments. This protein family construction relies on the use of a consistent annotation ontology as well as annotation with the most specific terms available among all genomes included in the input set.</p>
+    <p>This comparison builds on the sequence-based homologous protein families identified in the input Pangenome object, extending the data by also identifying protein families with putatively similar functions. Protein families with putatively similar functions are constructed by looking for sets of proteins with identical functional assignments. This implementation of the protein family construction relies on the use of a consistent annotation ontology and annotation with the most specific terms available among all genomes included in the input set.</p>
+
+    <p>The output from this App is a table with four tabs: (i) Overview, (ii) Genomes, (iii) Functions, and (ix) Families. The Overview tab indicates the genome comparison object name, the genome comparison workspace name, the number of total identified core functions, the number of identified core protein families, the KBase-specific protein comparison object ID, the object owner/author, and a timestamp for the creation of the object. The Genomes tab indicates a count of the number of protein families and number of protein function groups found within the queried genomes. The Functions tab indicates the functions identified across the query genomes; specifically, the function name and its associated subsystem, primary and secondary class. In addition, the Functions tab indicates the distribution for each function across each of the query genomes, including the total families and genes identified. The Families tab indicates the distribution of each gene family across each of the query genomes.</p>
+
+    <p><strong>Team members who developed &amp; deployed algorithm in KBase:</strong> Chris Henry and Matt DeJongh. For questions, please <a href=”http://kbase.us/contact-us/”>contact us</a>.</p>
 
 publications :
     -
