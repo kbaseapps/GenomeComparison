@@ -809,6 +809,7 @@ sub compare_genomes
 	for (my $j=0; $j < @{$ftrs}; $j++) {
 	    my $ftr = $ftrs->[$j];
 	    my $fam = $members->{$genome_ref}->{$ftr->{id}};
+		next unless ($fam gt '    ');
 	    my $score = $orthos->{$fam}->{$genome_ref}->{$ftr->{id}};
 	    my $roles = $self->function_to_roles($ftr->{function});
 	    my $funind = [];
