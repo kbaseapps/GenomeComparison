@@ -354,7 +354,7 @@ sub build_pangenome
 	die "Error loading genomes from workspace:\n".$@;
     }
 
-    my @genomes = keys %genomeH;
+    my @genomes = sort keys %genomeH;
 
     my $orthlist = [];
     my $okdb;
@@ -369,6 +369,7 @@ sub build_pangenome
     print STDERR "Processing ", scalar @genomes, " genomes\n";
     my $i = 0;
     foreach my $currgenome_name (@genomes) {
+		print "####CURENT NAME = $currgenome_name\n";
 	my $currgenome_ref;
     	my $gkdb = {};
     	my $genepairs;
@@ -427,7 +428,7 @@ sub build_pangenome
     						}
     						$gkdb->{$kmer} = {-1 => 0};
     					} else {
-    						foreach my $key (keys(%{$gkdb->{$kmer}})) {
+    						foreach my $key (sort keys(%{$gkdb->{$kmer}})) {
     							if ($key ne $j) {
     								if (!defined($genepairs->{$key}->{$j})) {
     									$genepairs->{$key}->{$j} = 0;
@@ -451,7 +452,7 @@ sub build_pangenome
     			}
     		}
     	};
-    	foreach my $kmer (keys(%{$gkdb})) {
+    	foreach my $kmer (sort keys(%{$gkdb})) {
     		if (!defined($gkdb->{$kmer}->{-1})) {
 	    		my $keep = 1;
 	    		if (keys(%{$gkdb->{$kmer}}) > 1) {
@@ -467,11 +468,11 @@ sub build_pangenome
 	    			}
 	    		}
 	    		if ($keep == 1) {
-	    			foreach my $gene (keys(%{$gkdb->{$kmer}})) {
+	    			foreach my $gene (sort keys(%{$gkdb->{$kmer}})) {
 	    				if ($bestorthos->[$gene] == -1) {
 	    					$bestorthos->[$gene] = @{$pangenome->{orthologs}};
 	    					my $list = [[$ftrs->[$gene]->{id},0,$currgenome_ref]];
-	    					foreach my $partner (keys(%{$genepairs->{$gene}})) {
+	    					foreach my $partner (sort keys(%{$genepairs->{$gene}})) {
 	    						if ($genepairs->{$gene}->{$partner} >= 10 && $bestorthos->[$partner] == -1) {
 	    							$bestorthos->[$partner] = @{$pangenome->{orthologs}};
 	    							push(@{$list},[$ftrs->[$partner]->{id},0,$currgenome_ref]);
@@ -499,7 +500,7 @@ sub build_pangenome
 	$i++;
     }
     print STDERR "Final score computing!\n";
-    foreach my $kmer (keys(%{$okdb})) {
+    foreach my $kmer (sort keys(%{$okdb})) {
     	my $index = $okdb->{$kmer};
     	my $list = $pangenome->{orthologs}->[$index]->{orthologs};
     	my $hits = [];
@@ -543,6 +544,7 @@ sub build_pangenome
 		      }]});
 
     $return = { 'report_name'=>$reportName, 'report_ref', $metadata->[0]->[6]."/".$metadata->[0]->[0]."/".$metadata->[0]->[4], 'pg_ref' => $workspace_name."/".$id};
+	
     #END build_pangenome
     my @_bad_returns;
     (ref($return) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"return\" (value was \"$return\")");
@@ -809,6 +811,7 @@ sub compare_genomes
 	for (my $j=0; $j < @{$ftrs}; $j++) {
 	    my $ftr = $ftrs->[$j];
 	    my $fam = $members->{$genome_ref}->{$ftr->{id}};
+		next unless ($fam gt '    ');
 	    my $score = $orthos->{$fam}->{$genome_ref}->{$ftr->{id}};
 	    my $roles = $self->function_to_roles($ftr->{function});
 	    my $funind = [];
