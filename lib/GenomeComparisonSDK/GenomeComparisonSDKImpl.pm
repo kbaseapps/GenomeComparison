@@ -25,7 +25,6 @@ use Workspace::WorkspaceClient;
 use GenomeAnnotationAPI::GenomeAnnotationAPIClient;
 use Config::IniFiles;
 use JSON::XS;
-use Data::Dumper;
 
 sub function_to_roles{
 	my ($self,$function) = @_;
@@ -524,9 +523,6 @@ sub build_pangenome
     		}
     	}
     }
-
-	print "Length ".length($pangenome->{'orthologs'})."\n";
-	print &Dumper($pangenome);
 	
     my $pg_metadata = $wsClient->save_objects({
 	'workspace' => $workspace_name,
