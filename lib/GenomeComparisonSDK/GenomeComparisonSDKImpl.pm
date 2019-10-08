@@ -25,6 +25,7 @@ use Workspace::WorkspaceClient;
 use GenomeAnnotationAPI::GenomeAnnotationAPIClient;
 use Config::IniFiles;
 use JSON::XS;
+use Data::Dumper;
 
 sub function_to_roles{
 	my ($self,$function) = @_;
@@ -394,9 +395,15 @@ sub build_pangenome
     	my $ftrs = $currgenome->{features};
     	for (my $j=0; $j < @{$ftrs}; $j++) {
     		my $feature = $ftrs->[$j];
-    		if (defined($feature->{protein_translation})) {
+			# Must have protein translation and the translation is not empty
+    		if (defined($feature->{protein_translation}) && $feature->{protein_translation} gt '') {
 				if (defined($proteins->{$feature->{parent_gene}})){
 					next
+				}
+				#  Disambiguate genomes that have the same gene IDs - e.g., gene_1 to gene_n 
+				while (exists $proteins->{$feature->{id}}) {
+					$ftrs->[$j]->{id} = $ftrs->[$j]->{id}."_1";
+					$feature->{id} = $ftrs->[$j]->{id};
 				}
     			$proteins->{$feature->{id}} = $feature->{protein_translation};
     			my $matchortho;
@@ -518,6 +525,9 @@ sub build_pangenome
     	}
     }
 
+	print "Length ".length($pangenome->{'orthologs'})."\n";
+	print &Dumper($pangenome);
+	
     my $pg_metadata = $wsClient->save_objects({
 	'workspace' => $workspace_name,
 	'objects' => [{
@@ -874,7 +884,8 @@ sub compare_genomes
 	my $numfuns = keys(%{$genfun});
 	$genomehash->{$genome_ref} = {
 	    id => $genome_ref,
-	    name => $g->{scientific_name},
+	    #name => $g->{scientific_name},
+		name => $g->{id},
 	    taxonomy => $taxonomy,
 	    genome_ref => $genome_ref,
 	    genome_similarity => {},
